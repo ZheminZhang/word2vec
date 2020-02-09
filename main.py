@@ -24,10 +24,11 @@ class IndexHandler(RequestHandler):
         sentence = utils.constructDescription(self.request)
         print("constructDescription time: " + str(time.time() - startTime))
         sim = self.word2vec.cmp_description(sentence)
-        self.finish({"description": sentence, "similarity": sim})
         print("sentence: " + sentence)
         endTime = time.time()
         print("total time cost: " + str(endTime - startTime))
+        self.finish({"description": sentence, "similarity": sim,
+                     "procTime": str(endTime - startTime)})
 
 
 class AddressHandler(RequestHandler):
