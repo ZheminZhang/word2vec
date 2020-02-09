@@ -13,12 +13,15 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 import tornado
 from tornado.concurrent import run_on_executor
+import codecs
 
 
 class IndexHandler(RequestHandler):
     executor = ThreadPoolExecutor(20)
-    output_model_name = "models/65d/models/word2vec_128d_model_zonghe"
-    word2vec = Word2Vec_Test(output_model_name)
+
+    def initialize(self, word2vec, description_data):
+        self.word2vec = word2vec
+        self.description_data = description_data
 
     def get(self):
         self.write("index")
@@ -28,7 +31,7 @@ class IndexHandler(RequestHandler):
         startTime = time.time()
         sentence = utils.constructDescription(self.request)
         print("constructDescription time: " + str(time.time() - startTime))
-        sim = yield self.word2vec.cmp_description(sentence)
+        sim = yield self.word2vec.cmp_description(sentence, self.description_data)
         print("sentence: " + sentence)
         endTime = time.time()
         print("total time cost: " + str(endTime - startTime))
@@ -93,12 +96,18 @@ class TestHandler(RequestHandler):
 
 
 if __name__ == '__main__':
-    executor = ThreadPoolExecutor(2)
+
+    output_model_name = "models/65d/models/word2vec_128d_model_zonghe"
+    word2vec = Word2Vec_Test(output_model_name)
+
+    description_file = 'data/test_data/description.txt'
+    description = codecs.open(description_file, 'r', 'utf-8')
+    description_data = description.readlines()
 
     startTime = time.time()
     i = 0
-    app = Application([(r'/', IndexHandler), ('/address/',
-                                              AddressHandler), ('/test/', TestHandler, {'i': i, "startTime": startTime})])
+    app = Application([(r'/', IndexHandler, {"word2vec": word2vec, "description_data": description_data}), ('/address/',
+                                                                                                            AddressHandler), ('/test/', TestHandler, {'i': i, "startTime": startTime})])
     http_server = HTTPServer(app)
     # 最原始的方式
     http_server.bind(8888)

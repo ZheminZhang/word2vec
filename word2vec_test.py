@@ -110,14 +110,16 @@ class Word2Vec_Test(object):
         return str(max(simArr))
 
     @run_on_executor
-    def cmp_description(self, sentence):
+    def cmp_description(self, sentence, description_data):
         simArr = []
-        description_file = 'data/test_data/description.txt'
-        with codecs.open(description_file, 'r', 'utf-8') as description:
-            description_data = description.readlines()
-            for description_line in description_data:
-                simArr.append(self.similarity(sentence, description_line))
+        # description_file = 'data/test_data/description.txt'
+        # with codecs.open(description_file, 'r', 'utf-8') as description:
+        #     description_data = description.readlines()
+        #     for description_line in description_data:
+        #         simArr.append(self.similarity(sentence, description_line))
 
+        for description_line in description_data:
+            simArr.append(self.similarity(sentence, description_line))
         print("simArr length: " + str(len(simArr)))
         return str(max(simArr))
 
