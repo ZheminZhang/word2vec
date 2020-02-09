@@ -65,7 +65,7 @@ if __name__ == '__main__':
     http_server = HTTPServer(app)
     # 最原始的方式
     http_server.bind(8888)
-    http_server.start(1)
+    http_server.start(0)
 
     # 启动Ioloop轮循监听
     IOLoop.current().start()
