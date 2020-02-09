@@ -10,20 +10,25 @@ import json
 import utils
 import requests
 import time
+from concurrent.futures import ThreadPoolExecutor
+import tornado
+from tornado.concurrent import run_on_executor
 
 
 class IndexHandler(RequestHandler):
+    executor = ThreadPoolExecutor(20)
     output_model_name = "models/65d/models/word2vec_128d_model_zonghe"
     word2vec = Word2Vec_Test(output_model_name)
 
     def get(self):
         self.write("index")
 
+    @tornado.gen.coroutine
     def post(self, *args, **kwargs):
         startTime = time.time()
         sentence = utils.constructDescription(self.request)
         print("constructDescription time: " + str(time.time() - startTime))
-        sim = self.word2vec.cmp_description(sentence)
+        sim = yield self.word2vec.cmp_description(sentence)
         print("sentence: " + sentence)
         endTime = time.time()
         print("total time cost: " + str(endTime - startTime))
@@ -60,8 +65,40 @@ class AddressHandler(RequestHandler):
         self.finish(result)
 
 
+class TestHandler(RequestHandler):
+    executor = ThreadPoolExecutor(20)
+
+    def initialize(self, i, startTime):
+        self.i = i
+        # print("i: " + str(i))
+        self.startTime = startTime
+        # print("startTime: " + str(startTime))
+
+    @run_on_executor
+    def waitTime(self):
+        time.sleep(2)
+
+    def get(self):
+        self.write("index")
+
+    @tornado.gen.coroutine
+    def post(self):
+        # print("startTime: " + str(self.startTime))
+        if time.time() - self.startTime > 1:
+            self.i = self.i + 1
+        # time.sleep(2)
+        yield self.waitTime()
+        print("time cost: " + str(time.time() - self.startTime))
+        self.finish({"i": self.i, "startTime": self.startTime})
+
+
 if __name__ == '__main__':
-    app = Application([(r'/', IndexHandler), ('/address/', AddressHandler)])
+    executor = ThreadPoolExecutor(2)
+
+    startTime = time.time()
+    i = 0
+    app = Application([(r'/', IndexHandler), ('/address/',
+                                              AddressHandler), ('/test/', TestHandler, {'i': i, "startTime": startTime})])
     http_server = HTTPServer(app)
     # 最原始的方式
     http_server.bind(8888)

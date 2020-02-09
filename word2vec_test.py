@@ -4,9 +4,13 @@ import numpy as np
 from gensim import matutils
 import jieba
 import codecs
+from tornado.concurrent import run_on_executor
+from concurrent.futures import ThreadPoolExecutor
 
 
 class Word2Vec_Test(object):
+    executor = ThreadPoolExecutor(20)
+
     def __init__(self, model_path):
         self.model_path = model_path
         self.embedding_size = 64
@@ -105,6 +109,7 @@ class Word2Vec_Test(object):
         # return str(sim)
         return str(max(simArr))
 
+    @run_on_executor
     def cmp_description(self, sentence):
         simArr = []
         description_file = 'data/test_data/description.txt'
