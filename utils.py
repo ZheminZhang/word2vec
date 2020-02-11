@@ -71,7 +71,7 @@ def getDescription(request):
     description = jsonobj.get("text")
     if description == "":
         print("get description from question")
-        description = jsonobj.get("zhengZhuan")
+        description = jsonobj.get("zhengZhuang")
     return description
 
 
