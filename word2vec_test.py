@@ -6,6 +6,7 @@ import jieba
 import codecs
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor
+import utils
 
 
 class Word2Vec_Test(object):
@@ -122,6 +123,26 @@ class Word2Vec_Test(object):
             simArr.append(self.similarity(sentence, description_line))
         print("simArr length: " + str(len(simArr)))
         return str(max(simArr))
+
+    @run_on_executor
+    def sickEstimate(self, request, description_data):
+        descriptionRatio = 0.25
+        questionRatio = 0.3
+        simArr = []
+        description = utils.getDescription(request)
+        for description_line in description_data:
+            simArr.append(self.similarity(description, description_line))
+        print("simArr length: " + str(len(simArr)))
+        descriptionEstimate = max(simArr) * descriptionRatio
+        print("descriptionEstimate: " + str(descriptionEstimate))
+        questionEstimate = utils.estimateByQuestion(request) * questionRatio
+        print("questionEstimate: " + str(questionEstimate))
+        overallEstimate = (descriptionEstimate + questionEstimate) / \
+            (descriptionRatio + questionRatio)
+        if (overallEstimate > 1):
+            return "1"
+        else:
+            return str(overallEstimate)
 
     def single_test(self):
         sentence1 = input('input A:')

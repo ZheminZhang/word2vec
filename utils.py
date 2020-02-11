@@ -59,3 +59,191 @@ def constructDescription(request):
 
     sentence = ",".join(sentenceArr)
     return sentence
+
+
+def getDescription(request):
+    jsonbyte = request.body
+    print('二进制格式ｊｓｏｎ字符串：', jsonbyte)
+    jsonstr = jsonbyte.decode('utf8')  # 解码，二进制转为字符串
+    print('ｊｓｏｎ字符串：', jsonstr)
+
+    jsonobj = json.loads(jsonstr)  # 将字符串转为json对象
+    description = jsonobj.get("text")
+    if description == "":
+        print("get description from question")
+        description = jsonobj.get("zhengZhuan")
+    return description
+
+
+def estimateByQuestion(request):
+    jsonbyte = request.body
+    print('二进制格式ｊｓｏｎ字符串：', jsonbyte)
+    jsonstr = jsonbyte.decode('utf8')  # 解码，二进制转为字符串
+    print('ｊｓｏｎ字符串：', jsonstr)
+
+    jsonobj = json.loads(jsonstr)  # 将字符串转为json对象
+
+    tempRatio = 0.08
+    ageRatio = 0.01
+    keSouRatio = 0.05
+    huXiRatio = 0.05
+    changWeiRatio = 0.02
+    yanHouRatio = 0.05
+    faLiRatio = 0.05
+    penTiRatio = 0.02
+    sheTaiRatio = 0.01
+    zhouWeiRatio = 0.07
+    zhengZhuangDaysRatio = 0.03
+    cityRatio = 0.1
+    partyRatio = 0.05
+    nowCityRatio = 0.1
+    jieChuRatio = 0.2
+    wuHanJieChuRatio = 0.05
+    cities1 = "武汉、鄂州、孝感、随州、黄冈"
+    cities2 = "黄石、仙桃、咸宁、荆门、宜昌、襄阳、荆州、十堰"
+    cities3 = "天门、潜江、新余、平遥县、温州、重庆万州区、三亚、恩施、珠海、南昌、信阳、深圳、双鸭山、天津宝坻区、长沙、蚌埠、台州"
+    cities4 = "九江、广州、岳阳、北海、鸡西、宁波、防城港、杭州、莆田、合肥、甘孜州、中山、抚州、亳州、铜陵、重庆市、驻马店、马鞍山、上饶、北京市、西双版纳傣族自治州、安庆、银川、萍乡、南阳、娄底、株洲、宜春、上海市、郑州、常德、威海、邵阳"
+
+    scoreArr = []
+    for key in jsonobj:
+        print(key + ": ")
+        value = jsonobj.get(key)
+        if key == "temp1" or key == "temp2" or key == "temp3":
+            if value == "":
+                value = "0"
+            if float(value) < 37.3:
+                scoreArr.append(0 * tempRatio)
+            elif float(value) < 39:
+                scoreArr.append(70 * tempRatio)
+            else:
+                scoreArr.append(30 * tempRatio)
+        if key == "age":
+            if value == "":
+                value = "0"
+            if int(value) < 50:
+                scoreArr.append(0 * ageRatio)
+            else:
+                scoreArr.append(100 * ageRatio)
+        if key == "itemValue":
+            if value == "A":
+                scoreArr.append(50 * keSouRatio)
+            elif value == "B":
+                scoreArr.append(25 * keSouRatio)
+            elif value == "C":
+                scoreArr.append(25 * keSouRatio)
+            elif value == "D":
+                scoreArr.append(0 * keSouRatio)
+        if key == "item1Value":
+            if value == "A":
+                scoreArr.append(50 * huXiRatio)
+            elif value == "B":
+                scoreArr.append(25 * huXiRatio)
+            elif value == "C":
+                scoreArr.append(25 * huXiRatio)
+            elif value == "D":
+                scoreArr.append(0 * huXiRatio)
+        if key == "item2Value":
+            if value == "A":
+                scoreArr.append(40 * changWeiRatio)
+            elif value == "B":
+                scoreArr.append(60 * changWeiRatio)
+            elif value == "C":
+                scoreArr.append(0 * changWeiRatio)
+        if key == "item3Value":
+            if value == "A":
+                scoreArr.append(100 * yanHouRatio)
+            elif value == "B":
+                scoreArr.append(0 * yanHouRatio)
+        if key == "item4Value":
+            if value == "A":
+                scoreArr.append(100 * faLiRatio)
+            elif value == "B":
+                scoreArr.append(0 * faLiRatio)
+        if key == "item5Value":
+            if value == "A":
+                scoreArr.append(100 * penTiRatio)
+            elif value == "B":
+                scoreArr.append(0 * penTiRatio)
+        if key == "item7Value":
+            if value == "A":
+                scoreArr.append(100 * sheTaiRatio)
+            elif value == "B":
+                scoreArr.append(0 * sheTaiRatio)
+        if key == "zhouWei":
+            if value == "":
+                value = "0"
+            if int(value) == 0:
+                scoreArr.append(0 * zhouWeiRatio)
+            elif int(value) < 3:
+                scoreArr.append(50 * zhouWeiRatio)
+            elif int(value) < 5:
+                scoreArr.append(70 * zhouWeiRatio)
+            else:
+                scoreArr.append(100 * zhouWeiRatio)
+        if key == "zhengZhuangDays":
+            if value == "":
+                value = "0"
+            if int(value) == 0:
+                scoreArr.append(0 * zhengZhuangDaysRatio)
+            elif int(value) < 3:
+                scoreArr.append(60 * zhengZhuangDaysRatio)
+            elif int(value) < 7:
+                scoreArr.append(80 * zhengZhuangDaysRatio)
+            else:
+                scoreArr.append(100 * zhengZhuangDaysRatio)
+        if key == "city":
+            if value == "":
+                scoreArr.append(10 * cityRatio)
+            elif value in cities1:
+                scoreArr.append(100 * cityRatio)
+            elif value in cities2:
+                scoreArr.append(75 * cityRatio)
+            elif value in cities3:
+                scoreArr.append(50 * cityRatio)
+            elif value in cities4:
+                scoreArr.append(25 * cityRatio)
+            else:
+                scoreArr.append(10 * cityRatio)
+        if key == "party":
+            if value == "":
+                scoreArr.append(10 * cityRatio)
+            elif value in cities1:
+                scoreArr.append(100 * partyRatio)
+            elif value in cities2:
+                scoreArr.append(75 * partyRatio)
+            elif value in cities3:
+                scoreArr.append(50 * partyRatio)
+            elif value in cities4:
+                scoreArr.append(25 * partyRatio)
+            else:
+                scoreArr.append(10 * partyRatio)
+        if key == "nowCity":
+            print("nowCity: " + value)
+            if value == "":
+                scoreArr.append(10 * cityRatio)
+            elif value in cities1:
+                print("in cities1")
+                scoreArr.append(100 * nowCityRatio)
+            elif value in cities2:
+                print("in cities2")
+                scoreArr.append(75 * nowCityRatio)
+            elif value in cities3:
+                print("in cities3")
+                scoreArr.append(50 * nowCityRatio)
+            elif value in cities4:
+                print("in cities4")
+                scoreArr.append(25 * nowCityRatio)
+            else:
+                print("not above")
+                scoreArr.append(10 * nowCityRatio)
+        if key == "item8Value":
+            if value == "A":
+                scoreArr.append(100 * jieChuRatio)
+            elif value == "B":
+                scoreArr.append(0 * jieChuRatio)
+        if key == "item9Value":
+            if value == "A":
+                scoreArr.append(100 * wuHanJieChuRatio)
+            elif value == "B":
+                scoreArr.append(0 * wuHanJieChuRatio)
+    return sum(scoreArr)/100
