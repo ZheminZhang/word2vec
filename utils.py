@@ -339,6 +339,10 @@ def constructDescription1(request):
     if len(sentenceArr) > 0:
         sentenceDescrption = ",".join(sentenceArr) + "。"
     description = sentence + " " + tempDescrption + sentenceDescrption
+    print("description length: " + str(len(description)))
+    if description == " ":
+        print("description null")
+        description = ""
     return description
 
 
