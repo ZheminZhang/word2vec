@@ -294,7 +294,7 @@ def constructDescription1(request):
             sentenceArr.append("出现全身乏力酸疼")
         elif key == "item5Value" and value == "A":
             sentenceArr.append("打喷嚏及流涕")
-        elif key == "item6Value":
+        elif key == "item6Value" and value != "A":
             sentenceArr.append(items6.get(value))
             # sentenceArr.append("舌苔偏厚")
         elif key == "item7Value":
