@@ -129,7 +129,7 @@ class Word2Vec_Test(object):
         descriptionRatio = 0.25
         questionRatio = 0.3
         simArr = []
-        description = utils.getDescription(request)
+        description = utils.constructDescription1(request)
         for description_line in description_data:
             simArr.append(self.similarity(description, description_line))
         print("simArr length: " + str(len(simArr)))

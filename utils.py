@@ -374,8 +374,9 @@ def estimateByQuestion1(request):
 
     scoreArr = []
     for key in jsonobj:
-        print(key + ": ")
         value = jsonobj.get(key)
+        print(key + ": " + str(value))
+
         # if key == "temp1" or key == "temp2" or key == "temp3":
         #     if value == "":
         #         value = "0"
@@ -436,6 +437,7 @@ def estimateByQuestion1(request):
         #     elif value == "B":
         #         scoreArr.append(0 * penTiRatio)
         if key == "item7Value":
+            sumRatio += sheTaiRatio
             if value == "A":
                 scoreArr.append(100 * sheTaiRatio)
             elif value == "B":
