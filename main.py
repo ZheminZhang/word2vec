@@ -29,8 +29,8 @@ class IndexHandler(RequestHandler):
     @tornado.gen.coroutine
     def post(self, *args, **kwargs):
         startTime = time.time()
-        description = utils.getDescription(self.request)
-        # sentence = utils.constructDescription(self.request)
+        # description = utils.getDescription(self.request)
+        description = utils.constructDescription1(self.request)
         print("constructDescription time: " + str(time.time() - startTime))
         # sim = yield self.word2vec.cmp_description(sentence, self.description_data)
         sim = yield self.word2vec.sickEstimate(self.request, self.description_data)

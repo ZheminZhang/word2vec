@@ -135,7 +135,7 @@ class Word2Vec_Test(object):
         print("simArr length: " + str(len(simArr)))
         descriptionEstimate = max(simArr) * descriptionRatio
         print("descriptionEstimate: " + str(descriptionEstimate))
-        questionEstimate = utils.estimateByQuestion(request) * questionRatio
+        questionEstimate = utils.estimateByQuestion1(request) * questionRatio
         print("questionEstimate: " + str(questionEstimate))
         overallEstimate = (descriptionEstimate + questionEstimate) / \
             (descriptionRatio + questionRatio)
