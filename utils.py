@@ -282,19 +282,19 @@ def constructDescription1(request):
         elif key == "age":
             # sentenceArr.append("年龄" + str(jsonobj.get(key)))
             print("")
-        elif key == "itemValue" and value != "D":
+        elif key == "itemValue" and value != "D" and value != "":
             sentenceArr.append(items.get(value))
-        elif key == "item1Value" and value != "D":
+        elif key == "item1Value" and value != "D" and value != "":
             sentenceArr.append(items1.get(value))
-        elif key == "item2Value" and value != "C":
+        elif key == "item2Value" and value != "C" and value != "":
             sentenceArr.append(items2.get(value))
-        elif key == "item3Value" and value == "A":
+        elif key == "item3Value" and value == "A" and value != "":
             sentenceArr.append("出现咽喉痛")
-        elif key == "item4Value" and value == "A":
+        elif key == "item4Value" and value == "A" and value != "":
             sentenceArr.append("出现全身乏力酸疼")
-        elif key == "item5Value" and value == "A":
+        elif key == "item5Value" and value == "A" and value != "":
             sentenceArr.append("打喷嚏及流涕")
-        elif key == "item6Value" and value != "A":
+        elif key == "item6Value" and value != "A" and value != "":
             sentenceArr.append(items6.get(value))
             # sentenceArr.append("舌苔偏厚")
         elif key == "item7Value":
@@ -338,11 +338,10 @@ def constructDescription1(request):
     sentenceDescrption = ""
     if len(sentenceArr) > 0:
         sentenceDescrption = ",".join(sentenceArr) + "。"
-    description = sentence + " " + tempDescrption + sentenceDescrption
-    print("description length: " + str(len(description)))
-    if description == " ":
-        print("description null")
+    if sentence == "" and tempDescrption == "" and sentenceDescrption == "":
         description = ""
+    else:
+        description = sentence + " " + tempDescrption + sentenceDescrption
     return description
 
 
@@ -441,11 +440,12 @@ def estimateByQuestion1(request):
         #     elif value == "B":
         #         scoreArr.append(0 * penTiRatio)
         if key == "item7Value":
-            sumRatio += sheTaiRatio
-            if value == "A":
-                scoreArr.append(100 * sheTaiRatio)
-            elif value == "B":
-                scoreArr.append(0 * sheTaiRatio)
+            if value != "":
+                sumRatio += sheTaiRatio
+                if value == "A":
+                    scoreArr.append(100 * sheTaiRatio)
+                elif value == "B":
+                    scoreArr.append(0 * sheTaiRatio)
         if key == "zhouWei":
             if value == "":
                 # value = "0"
@@ -529,15 +529,23 @@ def estimateByQuestion1(request):
                     print("not above")
                     scoreArr.append(10 * nowCityRatio)
         if key == "item8Value":
-            sumRatio += jieChuRatio
-            if value == "A":
-                scoreArr.append(100 * jieChuRatio)
-            elif value == "B":
-                scoreArr.append(0 * jieChuRatio)
+            if value != "":
+                sumRatio += jieChuRatio
+                if value == "A":
+                    scoreArr.append(100 * jieChuRatio)
+                elif value == "B":
+                    scoreArr.append(0 * jieChuRatio)
         if key == "item9Value":
-            sumRatio += wuHanJieChuRatio
-            if value == "A":
-                scoreArr.append(100 * wuHanJieChuRatio)
-            elif value == "B":
-                scoreArr.append(0 * wuHanJieChuRatio)
-    return sum(scoreArr)/100/sumRatio
+            if value != "":
+                sumRatio += wuHanJieChuRatio
+                if value == "A":
+                    scoreArr.append(100 * wuHanJieChuRatio)
+                elif value == "B":
+                    scoreArr.append(0 * wuHanJieChuRatio)
+    print ("jieChuRatio: " + str(jieChuRatio))
+    print ("wuHanJieChuRatio: " + str(wuHanJieChuRatio))
+    print ("sumRatio: " + str(sumRatio))
+    if sumRatio == 0:
+        return 0
+    else:
+        return sum(scoreArr)/100/sumRatio

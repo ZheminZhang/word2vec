@@ -130,15 +130,20 @@ class Word2Vec_Test(object):
         questionRatio = 0.3
         simArr = []
         description = utils.constructDescription1(request)
-        for description_line in description_data:
-            simArr.append(self.similarity(description, description_line))
-        print("simArr length: " + str(len(simArr)))
-        descriptionEstimate = max(simArr) * descriptionRatio
-        print("descriptionEstimate: " + str(descriptionEstimate))
-        questionEstimate = utils.estimateByQuestion1(request) * questionRatio
-        print("questionEstimate: " + str(questionEstimate))
-        overallEstimate = (descriptionEstimate + questionEstimate) / \
-            (descriptionRatio + questionRatio)
+        overallEstimate = 0
+        if description == "":
+            overallEstimate = utils.estimateByQuestion1(request)
+        else:
+            for description_line in description_data:
+                simArr.append(self.similarity(description, description_line))
+            print("simArr length: " + str(len(simArr)))
+            descriptionEstimate = max(simArr) * descriptionRatio
+            print("descriptionEstimate: " + str(descriptionEstimate))
+            questionEstimate = utils.estimateByQuestion1(
+                request) * questionRatio
+            print("questionEstimate: " + str(questionEstimate))
+            overallEstimate = (descriptionEstimate + questionEstimate) / \
+                (descriptionRatio + questionRatio)
         if (overallEstimate > 1):
             return "1"
         else:
