@@ -363,12 +363,13 @@ def estimateByQuestion1(request):
     # penTiRatio = 0.02
     sheTaiRatio = 0.03
     zhouWeiRatio = 0.15
-    zhengZhuangDaysRatio = 0.05
+    zhengZhuangDaysRatio = 0.03
     cityRatio = 0.15
     partyRatio = 0.10
     nowCityRatio = 0.15
     jieChuRatio = 0.2
     wuHanJieChuRatio = 0.15
+    xingBieRatio = 0.02
     sumRatio = 0
     cities1 = "武汉、鄂州、孝感、随州、黄冈"
     cities2 = "黄石、仙桃、咸宁、荆门、宜昌、襄阳、荆州、十堰"
@@ -542,6 +543,13 @@ def estimateByQuestion1(request):
                     scoreArr.append(100 * wuHanJieChuRatio)
                 elif value == "B":
                     scoreArr.append(0 * wuHanJieChuRatio)
+        if key == "item10Value":
+            if value != "":
+                sumRatio += xingBieRatio
+                if value == "A":
+                    scoreArr.append(75 * xingBieRatio)
+                elif value == "B":
+                    scoreArr.append(25 * xingBieRatio)
     print ("jieChuRatio: " + str(jieChuRatio))
     print ("wuHanJieChuRatio: " + str(wuHanJieChuRatio))
     print ("sumRatio: " + str(sumRatio))
